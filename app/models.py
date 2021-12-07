@@ -8,8 +8,9 @@ from django.urls import reverse
 
 
 class User(AbstractUser):
-    is_subadmin = models.BooleanField('bikeman status', default=False)
-    is_user = models.BooleanField('Customer status', default=False)
+    is_subadmin = models.BooleanField(default=False)
+    is_applicant = models.BooleanField(default=False)
+
 
 # Create your models here.
 class PersonalDetails(models.Model):
@@ -31,17 +32,17 @@ class PersonalDetails(models.Model):
         ('2', 'CHRISTAINITY')
     )
    
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     name = models.CharField(max_length = 150)
     address = models.CharField(max_length = 250)
-    dob = models.DateField("Date of Birth")
-    place_of_birth = models.CharField(max_length = 150)
+    dob = models.DateField("Date of Birth", null=True)
+    place_of_birth = models.CharField(max_length = 150, null=True)
     state = models.CharField(max_length=1, choices=STATE, default='ABIA')
     education = models.CharField(max_length=1, choices=EDUCATION, default='SCHOOL LEAVING CERTICATE')
     religion = models.CharField(max_length=1, choices=RELIGION, default='ISLAM')
     attend = models.CharField('Which Masjeed or Church do You Attend', max_length=250, blank=True, null=True)
     phone_number = models.PositiveIntegerField()
-    passport = models.ImageField("Passport Photography", upload_to='needy')
+    passport = models.ImageField("Passport Photography", upload_to='needy', null=True)
     create_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
@@ -66,7 +67,7 @@ class FamilyDetails(models.Model):
         ('3', 'Widowed')
     )
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     marital = models.CharField("What is Your Marital Status", max_length=1, choices=MARITAL)
     spouse = models.CharField("Spouse Name", max_length=50)
     spouse_employment = BooleanField("Does Your Spouse Employeed")
@@ -97,7 +98,7 @@ class FamilyDetails(models.Model):
 
 class EmployentDetails(models.Model):
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     status = models.BooleanField("Are you Current Employed", default=False)
     company = models.CharField(max_length = 150)
     since = models.DateField("Since When")
@@ -124,7 +125,7 @@ class EmployentDetails(models.Model):
     
 class SkilsDetails(models.Model):
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     skill = models.BooleanField("Are you Skilled", default=False)
     skill_details = TextField("More Details About Your Skill")
     vocation = models.BooleanField("Do You Have any Vocational Traning", default=False)
@@ -148,7 +149,7 @@ class SkilsDetails(models.Model):
 
 class Assistance(models.Model):
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     assistance = models.BooleanField("Have You Recieved Assistance from us before", default=False)
     theAssistance = TextField("Kindly Give information About the Assistance")
     similar = models.BooleanField("Have You Recieved Similar Assistance from else where", default=False)
@@ -173,7 +174,7 @@ class Assistance(models.Model):
 
 
 
-class NeedDatails(models.Model):
+class NeedDetails(models.Model):
 
     NEEDS = (
         ('1', 'SUBMITTED'),
@@ -182,7 +183,7 @@ class NeedDatails(models.Model):
         ('4', 'COMPLETED')
     )
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,  primary_key=True)
     needs = TextField("Eplain The Extract Nature of Your Need")
     status = models.CharField(max_length = 1, choices=NEEDS, default='SUBMITTED')
     when_complete = DateField()
@@ -205,7 +206,7 @@ class NeedDatails(models.Model):
 
 class RefereesDetails(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, primary_key=True)
     name = models.CharField(max_length = 150)
     phone = PositiveBigIntegerField()
     relationship = models.CharField(max_length=50)
@@ -221,3 +222,29 @@ class RefereesDetails(models.Model):
 
     def get_absolute_url(self):
         return reverse("RefereesDetails_detail", kwargs={"pk": self.pk})
+
+
+
+class SubAdminProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    name = models.CharField(max_length = 150)
+    address = models.CharField(max_length = 250)
+    dob = models.DateField("Date of Birth")
+    place_of_birth = models.CharField(max_length = 150)
+    phone_number = models.PositiveIntegerField()
+    passport = models.ImageField("Passport Photography", upload_to='subadmin')
+    create_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    """Model definition for SubAdminProfile."""
+
+    # TODO: Define fields here
+
+    class Meta:
+        """Meta definition for SubAdminProfile."""
+
+        verbose_name = 'SubAdminProfile'
+        verbose_name_plural = 'SubAdminProfiles'
+
+    def __str__(self):
+        """Unicode representation of SubAdminProfile."""
+        pass
